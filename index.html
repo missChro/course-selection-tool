@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Decision Support Tool</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Course Decision Support Tool</h1>
+  <p>Build your semester plan based on goals, constraints, and preferences.</p>
+
+  <h2>1. Basic Information</h2>
+  <label for="year">Year:</label>
+  <select id="year">
+    <option value="">Select your year</option>
+    <option value="Freshman">Freshman</option>
+    <option value="Sophomore">Sophomore</option>
+    <option value="Junior">Junior</option>
+    <option value="Senior">Senior</option>
+  </select>
+
+  <br><br>
+
+  <label for="major">Intended Major:</label>
+  <input type="text" id="major" placeholder="e.g. Business, Economics" />
+
+  <br><br>
+
+  <label for="completed">Completed Courses:</label>
+  <input type="text" id="completed" placeholder="e.g. Math 1A, Stat 20" />
+
+  <h2>2. Semester Goals</h2>
+  <label><input type="checkbox" name="goal" value="Complete major" /> Complete major</label><br>
+  <label><input type="checkbox" name="goal" value="GPA priority" /> GPA priority</label><br>
+  <label><input type="checkbox" name="goal" value="Control workload" /> Control workload</label><br>
+  <label><input type="checkbox" name="goal" value="Explore interests" /> Explore interests</label>
+
+  <h2>3. Constraints</h2>
+  <label for="max-units">Max Units:</label>
+  <input type="number" id="max-units" placeholder="e.g. 16" />
+
+  <br><br>
+
+  <label for="time-conflict">Time Conflict Preference:</label>
+  <select id="time-conflict">
+    <option value="">Select</option>
+    <option value="No conflicts allowed">No conflicts allowed</option>
+    <option value="Minor conflicts acceptable">Minor conflicts acceptable</option>
+  </select>
+
+  <br><br>
+
+  <label for="prereq">Prerequisite Rule:</label>
+  <select id="prereq">
+    <option value="">Select</option>
+    <option value="Must satisfy all prerequisites">Must satisfy all prerequisites</option>
+    <option value="Flexible">Flexible</option>
+  </select>
+
+  <h2>4. Preferences</h2>
+  <label for="gpa-priority">GPA Priority Level:</label>
+  <select id="gpa-priority">
+    <option value="">Select</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+
+  <br><br>
+
+  <label for="workload">Workload Tolerance:</label>
+  <select id="workload">
+    <option value="">Select</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+
+  <br><br>
+
+  <label for="risk">Risk Acceptance:</label>
+  <select id="risk">
+    <option value="">Select</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+
+  <br><br>
+
+  <label for="time-preference">Time Preference:</label>
+  <select id="time-preference">
+    <option value="">Select</option>
+    <option value="Morning">Morning</option>
+    <option value="Afternoon">Afternoon</option>
+    <option value="Evening">Evening</option>
+  </select>
+
+  <br><br>
+
+  <button type="button" onclick="submitPreferences()">Generate Input Summary</button>
+
+  <h2>Output</h2>
+  <div id="result"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
