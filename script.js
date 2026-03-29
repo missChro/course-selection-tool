@@ -23,30 +23,55 @@ function inferStrategy(gpaPriority, workload, risk, goals) {
 }
 
 
-// ===== Simple Plan Generation =====
+// ===== Weight System (NEW) =====
+function getWeights(gpaPriority, workload, risk) {
+  let wGPA = 0.33;
+  let wWorkload = 0.33;
+  let wRisk = 0.34;
+
+  if (gpaPriority === "High") {
+    wGPA += 0.2;
+  }
+
+  if (workload === "Low") {
+    wWorkload += 0.2;
+  }
+
+  if (risk === "Low") {
+    wRisk += 0.2;
+  }
+
+  // normalize
+  const total = wGPA + wWorkload + wRisk;
+
+  return {
+    wGPA: wGPA / total,
+    wWorkload: wWorkload / total,
+    wRisk: wRisk / total
+  };
+}
+
+
+// ===== Plan Generation =====
 function generateSimplePlan(strategy) {
   let sortedCourses;
 
   if (strategy === "Conservative") {
-    // 优先低风险 + 高GPA
     sortedCourses = [...courses].sort(
       (a, b) => (a.risk - b.risk) || (b.gpa - a.gpa)
     );
   } else if (strategy === "Hedged") {
-    // 接受风险 → 排序高风险
     sortedCourses = [...courses].sort((a, b) => b.risk - a.risk);
   } else {
-    // Balanced → 按GPA
     sortedCourses = [...courses].sort((a, b) => b.gpa - a.gpa);
   }
 
-  // 选前3门课
   return sortedCourses.slice(0, 3);
 }
 
 
-// ===== Evaluation (Scoring) =====
-function evaluatePlan(courses) {
+// ===== Evaluation (UPDATED WITH WEIGHTS) =====
+function evaluatePlan(courses, weights) {
   let totalGPA = 0;
   let totalWorkload = 0;
   let totalRisk = 0;
@@ -61,16 +86,14 @@ function evaluatePlan(courses) {
   const avgWorkload = totalWorkload / courses.length;
   const avgRisk = totalRisk / courses.length;
 
-  // 标准化（简化版）
-  const gpaScore = avgGPA / 4;            // GPA越高越好
-  const workloadScore = 1 - (avgWorkload / 30); // workload越低越好
-  const riskScore = 1 - avgRisk;          // risk越低越好
+  const gpaScore = avgGPA / 4;
+  const workloadScore = 1 - (avgWorkload / 30);
+  const riskScore = 1 - avgRisk;
 
-  // 加权（固定权重）
   const totalScore =
-    0.4 * gpaScore +
-    0.3 * workloadScore +
-    0.3 * riskScore;
+    weights.wGPA * gpaScore +
+    weights.wWorkload * workloadScore +
+    weights.wRisk * riskScore;
 
   return {
     gpaScore,
@@ -86,13 +109,9 @@ function submitPreferences() {
   const year = document.getElementById("year").value;
   const major = document.getElementById("major").value;
   const completed = document.getElementById("completed").value;
-  const maxUnits = document.getElementById("max-units").value;
-  const timeConflict = document.getElementById("time-conflict").value;
-  const prereq = document.getElementById("prereq").value;
   const gpaPriority = document.getElementById("gpa-priority").value;
   const workload = document.getElementById("workload").value;
   const risk = document.getElementById("risk").value;
-  const timePreference = document.getElementById("time-preference").value;
 
   const goals = Array.from(document.querySelectorAll('input[name="goal"]:checked'))
     .map(goal => goal.value);
@@ -100,11 +119,14 @@ function submitPreferences() {
   // 1️⃣ Strategy
   const strategy = inferStrategy(gpaPriority, workload, risk, goals);
 
-  // 2️⃣ Generate Plan
+  // 2️⃣ Weights
+  const weights = getWeights(gpaPriority, workload, risk);
+
+  // 3️⃣ Generate Plan
   const selectedCourses = generateSimplePlan(strategy);
 
-  // 3️⃣ Evaluate Plan
-  const scores = evaluatePlan(selectedCourses);
+  // 4️⃣ Evaluate Plan
+  const scores = evaluatePlan(selectedCourses, weights);
 
   const resultDiv = document.getElementById("result");
 
@@ -130,6 +152,15 @@ function submitPreferences() {
       <li>GPA Score: ${scores.gpaScore.toFixed(2)}</li>
       <li>Workload Score: ${scores.workloadScore.toFixed(2)}</li>
       <li>Risk Score: ${scores.riskScore.toFixed(2)}</li>
+    </ul>
+
+    <hr>
+
+    <h3>Weights (Personalization)</h3>
+    <ul>
+      <li>GPA Weight: ${weights.wGPA.toFixed(2)}</li>
+      <li>Workload Weight: ${weights.wWorkload.toFixed(2)}</li>
+      <li>Risk Weight: ${weights.wRisk.toFixed(2)}</li>
     </ul>
   `;
 }
