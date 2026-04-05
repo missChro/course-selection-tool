@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CourseWise — Build Your Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="input-page">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">course<span>wise</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">← Back to home</a></li>
+    </ul>
+    <div class="nav-badge">UC Berkeley</div>
+  </nav>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar">
+    <div class="progress-step active" data-step="1">
+      <div class="step-dot"></div>
+      <span>Basic Info</span>
+    </div>
+    <div class="progress-line"></div>
+    <div class="progress-step" data-step="2">
+      <div class="step-dot"></div>
+      <span>Constraints</span>
+    </div>
+    <div class="progress-line"></div>
+    <div class="progress-step" data-step="3">
+      <div class="step-dot"></div>
+      <span>Preferences</span>
+    </div>
+  </div>
+
+  <!-- FORM WRAPPER -->
+  <main class="form-main">
+
+    <!-- STEP 1: Basic Info -->
+    <section class="form-section active" id="step-1">
+      <div class="form-section-header">
+        <div class="section-number">01</div>
+        <div>
+          <h2 class="section-title">Tell us about yourself</h2>
+          <p class="section-sub">We'll use this to filter relevant courses and requirements.</p>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="year">What year are you?</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="year" value="Freshman" />
+            <span>Freshman</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="year" value="Sophomore" />
+            <span>Sophomore</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="year" value="Junior" />
+            <span>Junior</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="year" value="Senior" />
+            <span>Senior</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="major">Intended major</label>
+        <input class="text-input" type="text" id="major" placeholder="e.g. Business, Economics, Data Science" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="completed">Courses already completed</label>
+        <input class="text-input" type="text" id="completed" placeholder="e.g. Math 1A, Stat 20, Econ 1" />
+        <div class="field-hint">Separate with commas</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Semester goals <span class="label-optional">(select all that apply)</span></label>
+        <div class="checkbox-group">
+          <label class="checkbox-card">
+            <input type="checkbox" name="goal" value="Complete major" />
+            <div class="checkbox-content">
+              <div class="checkbox-icon">🎓</div>
+              <span>Complete major requirements</span>
+            </div>
+          </label>
+          <label class="checkbox-card">
+            <input type="checkbox" name="goal" value="GPA priority" />
+            <div class="checkbox-content">
+              <div class="checkbox-icon">📈</div>
+              <span>Boost GPA</span>
+            </div>
+          </label>
+          <label class="checkbox-card">
+            <input type="checkbox" name="goal" value="Control workload" />
+            <div class="checkbox-content">
+              <div class="checkbox-icon">⚖️</div>
+              <span>Control workload</span>
+            </div>
+          </label>
+          <label class="checkbox-card">
+            <input type="checkbox" name="goal" value="Explore interests" />
+            <div class="checkbox-content">
+              <div class="checkbox-icon">🔭</div>
+              <span>Explore interests</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <div></div>
+        <button class="btn-next" onclick="goToStep(2)">Continue <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Constraints -->
+    <section class="form-section" id="step-2">
+      <div class="form-section-header">
+        <div class="section-number">02</div>
+        <div>
+          <h2 class="section-title">Set your constraints</h2>
+          <p class="section-sub">Hard limits the system will respect when generating plans.</p>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="max-units">Maximum units this semester</label>
+        <div class="slider-row">
+          <input type="range" id="max-units" min="12" max="20" value="16" class="range-input"
+            oninput="document.getElementById('units-val').textContent = this.value" />
+          <div class="slider-value-pill"><span id="units-val">16</span> units</div>
+        </div>
+        <div class="slider-labels">
+          <span>12 (light)</span>
+          <span>20 (max)</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Time conflict preference</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="time-conflict" value="No conflicts allowed" checked />
+            <span>No conflicts allowed</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="time-conflict" value="Minor conflicts acceptable" />
+            <span>Minor conflicts OK</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Prerequisite rule</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="prereq" value="Must satisfy all prerequisites" checked />
+            <span>Must satisfy all prerequisites</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="prereq" value="Flexible" />
+            <span>Flexible</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="goToStep(1)">← Back</button>
+        <button class="btn-next" onclick="goToStep(3)">Continue <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- STEP 3: Preferences -->
+    <section class="form-section" id="step-3">
+      <div class="form-section-header">
+        <div class="section-number">03</div>
+        <div>
+          <h2 class="section-title">What matters most to you?</h2>
+          <p class="section-sub">This shapes how we weigh trade-offs between your plans.</p>
+        </div>
+      </div>
+
+      <div class="pref-grid">
+
+        <div class="pref-card">
+          <div class="pref-card-header">
+            <div class="pref-icon gpa-icon">📊</div>
+            <div>
+              <div class="pref-title">GPA</div>
+              <div class="pref-desc">How important is maintaining a high GPA this semester?</div>
+            </div>
+          </div>
+          <div class="pref-options" id="gpa-priority">
+            <label class="pref-option"><input type="radio" name="gpa-priority" value="High" /><span>High</span></label>
+            <label class="pref-option"><input type="radio" name="gpa-priority" value="Medium" checked /><span>Medium</span></label>
+            <label class="pref-option"><input type="radio" name="gpa-priority" value="Low" /><span>Low</span></label>
+          </div>
+        </div>
+
+        <div class="pref-card">
+          <div class="pref-card-header">
+            <div class="pref-icon">⚖️</div>
+            <div>
+              <div class="pref-title">Workload</div>
+              <div class="pref-desc">How much workload are you willing to take on?</div>
+            </div>
+          </div>
+          <div class="pref-options" id="workload">
+            <label class="pref-option"><input type="radio" name="workload" value="Low" /><span>Light</span></label>
+            <label class="pref-option"><input type="radio" name="workload" value="Medium" checked /><span>Moderate</span></label>
+            <label class="pref-option"><input type="radio" name="workload" value="High" /><span>Heavy</span></label>
+          </div>
+        </div>
+
+        <div class="pref-card">
+          <div class="pref-card-header">
+            <div class="pref-icon">🎯</div>
+            <div>
+              <div class="pref-title">Enrollment Risk</div>
+              <div class="pref-desc">How comfortable are you with waitlists or uncertain enrollment?</div>
+            </div>
+          </div>
+          <div class="pref-options" id="risk">
+            <label class="pref-option"><input type="radio" name="risk" value="Low" /><span>Not comfortable</span></label>
+            <label class="pref-option"><input type="radio" name="risk" value="Medium" checked /><span>Somewhat</span></label>
+            <label class="pref-option"><input type="radio" name="risk" value="High" /><span>Fine with risk</span></label>
+          </div>
+        </div>
+
+        <div class="pref-card">
+          <div class="pref-card-header">
+            <div class="pref-icon">🕐</div>
+            <div>
+              <div class="pref-title">Time Preference</div>
+              <div class="pref-desc">When do you prefer your classes to be scheduled?</div>
+            </div>
+          </div>
+          <div class="pref-options">
+            <label class="pref-option"><input type="radio" name="time-preference" value="Morning" /><span>Morning</span></label>
+            <label class="pref-option"><input type="radio" name="time-preference" value="Afternoon" checked /><span>Afternoon</span></label>
+            <label class="pref-option"><input type="radio" name="time-preference" value="Evening" /><span>Evening</span></label>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="goToStep(2)">← Back</button>
+        <button class="btn-main generate-btn" onclick="submitPreferences()">
+          Generate My Plans
+          <span class="arrow">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS (hidden until generated) -->
+    <section class="results-section" id="results-section" style="display:none;">
+      <div class="results-header">
+        <h2 class="results-title">We generated <em>3 plans</em> based on different strategies.</h2>
+        <p class="results-sub">Each reflects a different way of balancing your goals. Choose the one that fits.</p>
+      </div>
+      <div id="result" class="plans-grid"></div>
+      <div class="results-footer">
+        <button class="btn-back" onclick="resetForm()">← Adjust preferences</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // Step navigation
+    function goToStep(n) {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.progress-step').forEach((s, i) => {
+        s.classList.toggle('active', i < n);
+        s.classList.toggle('done', i < n - 1);
+      });
+      document.getElementById('step-' + n).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('results-section').style.display = 'none';
+      document.querySelector('.progress-bar').style.display = 'flex';
+      goToStep(1);
+    }
+
+    // Save preferences and go to results page
+    function submitPreferences() {
+      const gpaPriority = document.querySelector('input[name="gpa-priority"]:checked')?.value || 'Medium';
+      const workload    = document.querySelector('input[name="workload"]:checked')?.value    || 'Medium';
+      const risk        = document.querySelector('input[name="risk"]:checked')?.value        || 'Medium';
+      const goals       = Array.from(document.querySelectorAll('input[name="goal"]:checked')).map(g => g.value);
+      const year        = document.querySelector('input[name="year"]:checked')?.value        || '';
+      const major       = document.getElementById('major')?.value || '';
+
+      localStorage.setItem('cw_prefs', JSON.stringify({ gpaPriority, workload, risk, goals, year, major }));
+      window.location.href = 'results.html';
+    }
+  </script>
+</body>
+</html>
