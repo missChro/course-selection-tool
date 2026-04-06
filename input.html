@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Plan My Course — Build Your Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .ac-wrap{position:relative}
+    .ac-input{width:100%;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:6px;font-family:var(--font-sans);font-size:15px;color:var(--dark);outline:none;transition:border-color .2s,box-shadow .2s}
+    .ac-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(45,90,61,.08)}
+    .ac-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:8px;z-index:100;max-height:200px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(26,26,24,.1)}
+    .ac-dd.open{display:block}
+    .ac-item{padding:10px 16px;font-size:14px;color:var(--dark);cursor:pointer;transition:background .15s}
+    .ac-item:hover{background:var(--bg)}
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;min-height:28px}
+    .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(45,90,61,.08);border:1px solid rgba(45,90,61,.2);border-radius:100px;padding:4px 12px;font-size:13px;color:var(--green);font-weight:500}
+    .tag-x{cursor:pointer;font-size:16px;line-height:1;color:var(--green);opacity:.6;background:none;border:none;font-family:inherit;padding:0}
+    .tag-x:hover{opacity:1}
+    .field-error{font-size:12px;color:#c0612e;margin-top:6px;display:none}
+    .field-error.show{display:block}
+    .goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .goal-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .2s}
+    .goal-card input{accent-color:var(--green);width:16px;height:16px;flex-shrink:0}
+    .goal-card:has(input:checked){border-color:var(--green);background:rgba(45,90,61,.05)}
+    .goal-text{font-size:14px;color:var(--muted)}
+    .goal-card:has(input:checked) .goal-text{color:var(--green);font-weight:500}
+
+    /* Section divider label */
+    .section-divider{margin:36px 0 20px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+    .section-divider-title{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--dark);margin-bottom:4px}
+    .section-divider-sub{font-size:13px;color:var(--muted);font-weight:300}
+
+    .prio-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .prio-pill{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s}
+    .prio-pill input{accent-color:var(--green)}
+    .prio-pill:has(input:checked){border-color:var(--dark);background:var(--dark);color:var(--bg)}
+    .prio-hint{font-size:12px;color:var(--light-muted);margin-top:8px;font-style:italic}
+
+    .slider-row{display:flex;align-items:center;gap:16px}
+    .range-input{flex:1;accent-color:var(--green);cursor:pointer}
+    .slider-pill{background:var(--dark);color:var(--bg);font-size:13px;font-weight:500;padding:6px 14px;border-radius:100px;white-space:nowrap;min-width:80px;text-align:center}
+    .slider-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--light-muted);margin-top:6px}
+
+    .pref-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px}
+    .pref-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s}
+    .pref-card.invalid{border-color:#e87e5a}
+    .pref-hd{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+    .pref-icon{font-size:20px;flex-shrink:0}
+    .pref-title{font-size:15px;font-weight:500;margin-bottom:2px}
+    .pref-desc{font-size:12px;color:var(--muted);line-height:1.5}
+    .pref-opts{display:flex;gap:6px}
+    .pref-opt{flex:1}
+    .pref-opt input{display:none}
+    .pref-opt span{display:block;text-align:center;font-size:12px;padding:7px 4px;border-radius:5px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s}
+    .pref-opt:has(input:checked) span{background:var(--dark);color:var(--bg);border-color:var(--dark);font-weight:500}
+
+    @media(max-width:768px){.pref-grid,.goal-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body class="input-page">
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">plan<span>mycourse</span></a>
+  <ul class="nav-links"><li><a href="index.html">← Home</a></li></ul>
+</nav>
+
+<!-- 3-step progress bar -->
+<div class="progress-bar" id="prog-bar">
+  <div class="progress-step active" id="ps-1"><div class="step-dot"></div><span>Basic Info</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" id="ps-2"><div class="step-dot"></div><span>Preferences</span></div>
+  <div class="progress-line"></div>
+  <div class="progress-step" id="ps-3"><div class="step-dot"></div><span>Plans</span></div>
+</div>
+
+<main class="form-main">
+
+  <!-- ══ STEP 1: Basic Info ═══════════════════════════════════ -->
+  <section class="form-section active" id="step-1">
+    <div class="form-section-header">
+      <div class="section-number">01</div>
+      <div>
+        <h2 class="section-title">Tell us about yourself</h2>
+        <p class="section-sub">We use this to filter relevant courses and requirements.</p>
+      </div>
+    </div>
+
+    <!-- Year -->
+    <div class="field-group">
+      <label class="field-label">What year are you?</label>
+      <div class="radio-group">
+        <label class="radio-card"><input type="radio" name="year" value="Freshman"><span>Freshman</span></label>
+        <label class="radio-card"><input type="radio" name="year" value="Sophomore"><span>Sophomore</span></label>
+        <label class="radio-card"><input type="radio" name="year" value="Junior"><span>Junior</span></label>
+        <label class="radio-card"><input type="radio" name="year" value="Senior"><span>Senior</span></label>
+      </div>
+    </div>
+
+    <!-- Major autocomplete -->
+    <div class="field-group">
+      <label class="field-label">
+        Intended/Declared Major <span style="color:#c0612e">*</span>
+        <span style="font-weight:400;color:var(--light-muted)"> (up to 2)</span>
+      </label>
+      <div class="ac-wrap">
+        <input class="ac-input" id="major-input" placeholder="Search major…" autocomplete="off">
+        <div class="ac-dd" id="major-dd"></div>
+      </div>
+      <div class="tags-wrap" id="major-tags"></div>
+      <div class="field-error" id="major-err">Please select at least one major to continue.</div>
+    </div>
+
+    <!-- Completed courses -->
+    <div class="field-group">
+      <label class="field-label">
+        Courses already completed
+        <span style="font-weight:400;color:var(--light-muted)"> (optional)</span>
+      </label>
+      <div class="ac-wrap">
+        <input class="ac-input" id="course-input" placeholder="Search course…" autocomplete="off">
+        <div class="ac-dd" id="course-dd"></div>
+      </div>
+      <div class="tags-wrap" id="course-tags"></div>
+    </div>
+
+    <!-- Section divider: Goals & Constraints -->
+    <div class="section-divider">
+      <div class="section-divider-title">Goals &amp; Constraints</div>
+      <div class="section-divider-sub">Set your semester focus and unit limit. Next, you'll choose how to weigh trade-offs.</div>
+    </div>
+
+    <!-- Goals -->
+    <div class="field-group">
+      <label class="field-label">Semester goals <span style="font-weight:400;color:var(--light-muted)">(select all that apply)</span></label>
+      <div class="goal-grid">
+        <label class="goal-card"><input type="checkbox" name="goal" value="Complete major"><span class="goal-text">🎓 Complete major requirements</span></label>
+        <label class="goal-card"><input type="checkbox" name="goal" value="GPA priority"><span class="goal-text">📈 Boost GPA</span></label>
+        <label class="goal-card"><input type="checkbox" name="goal" value="Control workload"><span class="goal-text">⚖️ Control workload</span></label>
+        <label class="goal-card"><input type="checkbox" name="goal" value="Explore interests"><span class="goal-text">🔭 Explore interests</span></label>
+      </div>
+    </div>
+
+    <!-- Top Priority -->
+    <div class="field-group">
+      <label class="field-label">Top priority this semester <span style="color:#c0612e">*</span></label>
+      <div class="prio-grid">
+        <label class="prio-pill"><input type="radio" name="top-priority" value="GPA"> Boost GPA</label>
+        <label class="prio-pill"><input type="radio" name="top-priority" value="Workload"> Control workload</label>
+        <label class="prio-pill"><input type="radio" name="top-priority" value="Progress"> Finish requirements</label>
+        <label class="prio-pill"><input type="radio" name="top-priority" value="Explore"> Explore interests</label>
+      </div>
+      <div class="prio-hint">We use this to decide which plan to recommend.</div>
+      <div class="field-error" id="prio-err">Please select your top priority to continue.</div>
+    </div>
+
+    <!-- Units slider -->
+    <div class="field-group">
+      <label class="field-label">Maximum units this semester</label>
+      <div class="slider-row">
+        <input type="range" id="max-units" min="13" max="21" value="16" class="range-input"
+          oninput="document.getElementById('uval').textContent=this.value">
+        <div class="slider-pill"><span id="uval">16</span> units</div>
+      </div>
+      <div class="slider-labels"><span>13 (light)</span><span>21 (max)</span></div>
+    </div>
+
+    <div class="step-nav">
+      <div></div>
+      <button class="btn-next" onclick="validateStep1()">Continue <span>→</span></button>
+    </div>
+  </section>
+
+  <!-- ══ STEP 2: Preferences ══════════════════════════════════ -->
+  <section class="form-section" id="step-2">
+    <div class="form-section-header">
+      <div class="section-number">02</div>
+      <div>
+        <h2 class="section-title">What matters most to you?</h2>
+        <p class="section-sub">All four must be filled — this shapes how we weigh trade-offs. We'll use this to recommend a plan.</p>
+      </div>
+    </div>
+
+    <div class="pref-grid">
+      <!-- GPA -->
+      <div class="pref-card" id="pc-gpa">
+        <div class="pref-hd"><div class="pref-icon">📊</div>
+          <div><div class="pref-title">GPA</div><div class="pref-desc">How important is maintaining a high GPA this semester?</div></div>
+        </div>
+        <div class="pref-opts">
+          <label class="pref-opt"><input type="radio" name="gpa" value="High"><span>High</span></label>
+          <label class="pref-opt"><input type="radio" name="gpa" value="Medium"><span>Medium</span></label>
+          <label class="pref-opt"><input type="radio" name="gpa" value="Low"><span>Low</span></label>
+        </div>
+      </div>
+      <!-- Workload -->
+      <div class="pref-card" id="pc-workload">
+        <div class="pref-hd"><div class="pref-icon">⚖️</div>
+          <div><div class="pref-title">Workload</div><div class="pref-desc">How much workload are you willing to take on?</div></div>
+        </div>
+        <div class="pref-opts">
+          <label class="pref-opt"><input type="radio" name="workload" value="Light"><span>Light</span></label>
+          <label class="pref-opt"><input type="radio" name="workload" value="Moderate"><span>Moderate</span></label>
+          <label class="pref-opt"><input type="radio" name="workload" value="Heavy"><span>Heavy</span></label>
+        </div>
+      </div>
+      <!-- Enrollment Risk — updated labels -->
+      <div class="pref-card" id="pc-risk">
+        <div class="pref-hd"><div class="pref-icon">🎯</div>
+          <div><div class="pref-title">Enrollment Risk</div><div class="pref-desc">How comfortable are you with waitlists or uncertain enrollment?</div></div>
+        </div>
+        <div class="pref-opts">
+          <label class="pref-opt"><input type="radio" name="risk" value="Low"><span>Low risk only</span></label>
+          <label class="pref-opt"><input type="radio" name="risk" value="Medium"><span>Some risk</span></label>
+          <label class="pref-opt"><input type="radio" name="risk" value="High"><span>High risk OK</span></label>
+        </div>
+      </div>
+      <!-- Progress — High/Medium/Low aligned with GPA -->
+      <div class="pref-card" id="pc-progress">
+        <div class="pref-hd"><div class="pref-icon">🗺️</div>
+          <div><div class="pref-title">Progress</div><div class="pref-desc">How important is staying on track toward graduation?</div></div>
+        </div>
+        <div class="pref-opts">
+          <label class="pref-opt"><input type="radio" name="progress" value="High"><span>High</span></label>
+          <label class="pref-opt"><input type="radio" name="progress" value="Medium"><span>Medium</span></label>
+          <label class="pref-opt"><input type="radio" name="progress" value="Low"><span>Low</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div id="pref-err" style="font-size:12px;color:#c0612e;margin-bottom:16px;display:none">Please fill in all four preferences above.</div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="goToStep(1)">← Back</button>
+      <button class="btn-next" onclick="validateStep2()">Generate My Plans <span>→</span></button>
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+<script>
+  const MAJORS = ["Business Administration (Haas)","Economics","Data Science","Computer Science","Statistics","Applied Mathematics","Political Science","Psychology","Sociology","History","English","Philosophy","Cognitive Science","Environmental Science","Undeclared / Exploring"];
+  const CLIST  = COURSES.map(c => c.name);
+  const selMajors = [], selCourses = [];
+
+  function makeAC(inputId, ddId, tagsId, list, selArr, maxN) {
+    const inp = document.getElementById(inputId);
+    const dd  = document.getElementById(ddId);
+    const tw  = document.getElementById(tagsId);
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      const matches = list.filter(v => v.toLowerCase().includes(q) && !selArr.includes(v));
+      dd.innerHTML = '';
+      if (!q || !matches.length) { dd.classList.remove('open'); return; }
+      matches.slice(0,8).forEach(v => {
+        const d = document.createElement('div');
+        d.className = 'ac-item'; d.textContent = v;
+        d.onclick = () => {
+          if (selArr.length >= maxN) return;
+          selArr.push(v); renderTags(tw, selArr, tagsId, inputId, ddId, maxN);
+          inp.value = ''; dd.classList.remove('open');
+        };
+        dd.appendChild(d);
+      });
+      dd.classList.add('open');
+    });
+    document.addEventListener('click', e => {
+      if (!inp.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
+    });
+  }
+
+  function renderTags(wrap, arr, tagsId, inputId, ddId, maxN) {
+    wrap.innerHTML = '';
+    arr.forEach((v,i) => {
+      const t = document.createElement('div'); t.className = 'tag';
+      t.innerHTML = `${v}<button class="tag-x" onclick="removeTag('${tagsId}','${inputId}','${ddId}',${maxN},${i})">×</button>`;
+      wrap.appendChild(t);
+    });
+  }
+
+  function removeTag(tagsId, inputId, ddId, maxN, idx) {
+    const arr = tagsId === 'major-tags' ? selMajors : selCourses;
+    arr.splice(idx, 1);
+    renderTags(document.getElementById(tagsId), arr, tagsId, inputId, ddId, maxN);
+  }
+
+  // Handle #step-2 hash (coming back from results page)
+  if (window.location.hash === '#step-2') {
+    const saved2 = JSON.parse(localStorage.getItem('cw_prefs') || 'null');
+    if (saved2) {
+      (saved2.majors||[]).forEach(v => { if (!selMajors.includes(v)) selMajors.push(v); });
+      (saved2.completed||[]).forEach(v => { if (!selCourses.includes(v)) selCourses.push(v); });
+    }
+    // Delay so DOM is ready
+    setTimeout(() => {
+      renderTags(document.getElementById('major-tags'), selMajors, 'major-tags','major-input','major-dd',2);
+      renderTags(document.getElementById('course-tags'), selCourses, 'course-tags','course-input','course-dd',20);
+      goToStep(2);
+    }, 50);
+  }
+
+  makeAC('major-input', 'major-dd', 'major-tags', MAJORS, selMajors,  2);
+  makeAC('course-input','course-dd','course-tags', CLIST,  selCourses, 20);
+
+  function goToStep(n) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-'+n).classList.add('active');
+    // Update 3-step progress
+    ['ps-1','ps-2','ps-3'].forEach((id,i) => {
+      const el = document.getElementById(id);
+      el.classList.toggle('active', i+1 === n);
+      el.classList.toggle('done',   i+1 < n);
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function validateStep1() {
+    let ok = true;
+    if (selMajors.length === 0) { document.getElementById('major-err').classList.add('show'); ok = false; }
+    else document.getElementById('major-err').classList.remove('show');
+    if (!document.querySelector('input[name="top-priority"]:checked')) {
+      document.getElementById('prio-err').classList.add('show'); ok = false;
+    } else document.getElementById('prio-err').classList.remove('show');
+    if (ok) goToStep(2);
+  }
+
+  function validateStep2() {
+    const dims = ['gpa','workload','risk','progress'];
+    let ok = true;
+    dims.forEach(d => {
+      const card = document.getElementById('pc-'+d);
+      const sel  = document.querySelector(`input[name="${d}"]:checked`);
+      if (!sel) { card.classList.add('invalid'); ok = false; }
+      else card.classList.remove('invalid');
+    });
+    document.getElementById('pref-err').style.display = ok ? 'none' : 'block';
+    if (!ok) return;
+    const prefs = {
+      year:        document.querySelector('input[name="year"]:checked')?.value || '',
+      majors:      [...selMajors],
+      completed:   [...selCourses],
+      goals:       Array.from(document.querySelectorAll('input[name="goal"]:checked')).map(g=>g.value),
+      topPriority: document.querySelector('input[name="top-priority"]:checked').value,
+      maxUnits:    parseInt(document.getElementById('max-units').value),
+      gpa:         document.querySelector('input[name="gpa"]:checked').value,
+      workload:    document.querySelector('input[name="workload"]:checked').value,
+      risk:        document.querySelector('input[name="risk"]:checked').value,
+      progress:    document.querySelector('input[name="progress"]:checked').value
+    };
+    localStorage.setItem('cw_prefs', JSON.stringify(prefs));
+    window.location.href = 'results.html';
+  }
+</script>
+</body>
+</html>
