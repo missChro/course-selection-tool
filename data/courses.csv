@@ -1,7 +1,0 @@
-course_id,name,units,workload,gpa,risk,category
-UGBA10,Intro to Business,4,18,3.6,0.2,business
-STAT20,Intro to Statistics,4,20,3.4,0.3,data
-ECON100A,Microeconomics,4,25,3.3,0.5,econ
-DATA8,Foundations of Data Science,4,22,3.5,0.4,data
-HISTORY7A,US History,4,15,3.7,0.2,history
-PHILOS3,Ethics,4,12,3.8,0.1,humanities
