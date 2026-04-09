@@ -1,0 +1,11 @@
+section_id,course_id,instructor,days,start_time,end_time,capacity,enrolled,waitlist
+1,1,Smith,MWF,10:00,11:00,120,118,25
+2,2,Johnson,MWF,11:00,12:00,100,100,40
+3,3,Lee,TuTh,13:00,14:30,200,200,80
+4,4,Wang,MWF,09:00,10:00,150,140,20
+5,5,Miller,MWF,14:00,15:00,300,300,120
+6,6,Chen,TuTh,10:00,11:30,180,150,10
+7,7,Garcia,MWF,08:00,09:00,400,400,200
+8,8,Davis,TuTh,15:00,16:30,250,200,5
+9,9,Brown,MWF,12:00,13:00,200,180,15
+10,10,Wilson,TuTh,09:30,11:00,120,90,0
