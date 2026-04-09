@@ -1,0 +1,11 @@
+course_id,course_code,title,units,department
+1,ECON 100A,Intermediate Microeconomics,4,ECON
+2,ECON 100B,Intermediate Macroeconomics,4,ECON
+3,UGBA 10,Principles of Business,3,UGBA
+4,UGBA 88,Data and Decisions,4,UGBA
+5,DATA 8,Foundations of Data Science,4,DATA
+6,STAT 20,Introduction to Probability,4,STAT
+7,CS 61A,Structure and Interpretation of Computer Programs,4,CS
+8,PSYCH 1,Introduction to Psychology,3,PSYCH
+9,NUTR SCI 10,Introduction to Human Nutrition,3,NUTRSCI
+10,PHILOS 2,Individual Morality and Social Justice,4,PHILOS
