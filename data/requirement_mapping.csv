@@ -1,0 +1,13 @@
+course_id,path,requirement_type,importance
+1,Econ,core,1.0
+2,Econ,core,1.0
+3,Haas,core,1.0
+4,Haas,prereq,0.8
+5,Data,core,1.0
+6,Data,prereq,0.8
+7,Data,advanced,1.0
+6,Econ,prereq,0.6
+5,Econ,support,0.5
+8,Breadth,req,0.5
+9,Breadth,req,0.5
+10,Breadth,req,0.5
