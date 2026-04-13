@@ -105,12 +105,12 @@
   </div>
 
   <div class="rh-eyebrow">My course plans</div>
-  <h1 class="rh-title">We generated <em>3 plans</em><br>based on your priorities.</h1>
-  <p class="rh-sub">Each reflects a different trade-off strategy. There is no single right answer — compare what each plan optimizes and what it gives up.</p>
+  <h1 class="rh-title">We generated <em>3 plans</em><br>based on what you care about.</h1>
+  <p class="rh-sub">Each reflects a different priority. Tell us what you care about most — we rank courses accordingly. Compare what each plan optimises for your goals.</p>
   <div class="profile-strip" id="profile-strip"></div>
 
   <div class="weights-section">
-    <div class="weights-title">How your preferences map to scoring</div>
+    <div class="weights-title">Your priorities</div>
     <div class="weights-grid" id="weights-grid"></div>
   </div>
 
@@ -135,26 +135,8 @@
 
 <script src="script.js"></script>
 <script>
-  function resolveWeights(prefs) {
-    if (prefs.sliderWeights) {
-      const raw = {
-        gpa: Number(prefs.sliderWeights.gpa) || 0,
-        workload: Number(prefs.sliderWeights.workload) || 0,
-        risk: Number(prefs.sliderWeights.risk) || 0,
-        progress: Number(prefs.sliderWeights.progress) || 0
-      };
-      const total = Object.values(raw).reduce((sum, value) => sum + value, 0);
-      if (total > 0) {
-        return {
-          gpa: raw.gpa / total,
-          workload: raw.workload / total,
-          risk: raw.risk / total,
-          progress: raw.progress / total
-        };
-      }
-    }
-    return getWeights(prefs.gpa, prefs.workload, prefs.risk, prefs.progress);
-  }
+  // resolveWeights is now defined in script.js (delegates to resolveWeightsFromPrefs)
+  // kept here as identity pass-through for backwards compatibility
 
   const saved = JSON.parse(localStorage.getItem("cw_prefs") || "null");
 
@@ -181,10 +163,6 @@
     [
       prefs.year && ["Year", prefs.year],
       prefs.majors?.length && ["Major", prefs.majors.join(" & ")],
-      ["GPA", prefs.gpa],
-      ["Workload", prefs.workload],
-      ["Risk", prefs.risk],
-      ["Progress", prefs.progress],
       ["Max units", prefs.maxUnits + " units"]
     ].filter(Boolean).forEach(([k, v]) => {
       strip.innerHTML += `<div class="profile-pill"><strong>${k}:</strong> ${v}</div>`;
@@ -197,9 +175,9 @@
     });
 
     const meta = {
-      Conservative: { dot: "#4caf7d", tagline: "Lower risk · More stable GPA · Predictable semester" },
-      Balanced: { dot: "#5b8dd9", tagline: "Even trade-off · Moderate risk · Solid progression" },
-      Hedged: { dot: "#9b7fd4", tagline: "Multi-path coverage · Keeps options open · More trade-offs" }
+      Conservative: { dot: "#4caf7d", tagline: "Lowest enrollment risk · Stable and predictable" },
+      Balanced: { dot: "#5b8dd9", tagline: "Best overall score · No sharp trade-offs" },
+      Ambitious: { dot: "#9b7fd4", tagline: "Maximum degree progress · Fastest path forward" }
     };
 
     const cg = document.getElementById("cards-grid");
