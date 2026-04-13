@@ -198,16 +198,27 @@ function comboGPA(courses) {
 }
 
 function comboWorkload(courses) {
-  // weeklyHours adjusted for exam intensity
-  return courses.reduce((s, c) => s + c.weeklyHours * (1 + 0.1 * (c.examCount - 2)), 0);
+  // Document-aligned workload: average workload across the combo.
+  if (!courses.length) return 0;
+  const totalAdjustedHours = courses.reduce(
+    (s, c) => s + c.weeklyHours * (1 + 0.1 * (c.examCount - 2)),
+    0
+  );
+  return totalAdjustedHours / courses.length;
 }
 
-// Progress = unit-weighted average of reqWeight across combo
-// Higher reqWeight = course matters more for degree requirements (core > required > elective)
+function isDirectRequirementType(reqType) {
+  return ["core", "advanced", "prereq", "req"].includes(String(reqType).toLowerCase());
+}
+
+// Document-aligned progress: coverage ratio of courses that directly satisfy
+// major requirements (core / advanced / prereq / required) within the combo.
 function comboProgress(courses) {
-  const units = comboUnits(courses);
-  if (!units) return 0;
-  return courses.reduce((s, c) => s + c.reqWeight * c.units, 0) / units;
+  if (!courses.length) return 0;
+  const directCount = courses.filter(c =>
+    c.requirementTypes.some(isDirectRequirementType)
+  ).length;
+  return directCount / courses.length;
 }
 
 function comboRisk(courses) {
@@ -240,7 +251,7 @@ function buildPool(courses, completedIds, targetPaths) {
 // Run COMBO_COUNT times with different shuffles to explore the space.
 const COMBO_COUNT = 60;
 const MIN_COURSES = 3;
-const MAX_COURSES = 4;
+const MAX_COURSES = 5;
 
 function generateCombinations(pool, maxUnits, targetPaths) {
   const combos = [];
@@ -298,7 +309,7 @@ function generateCombinations(pool, maxUnits, targetPaths) {
 
 // ── Step 3: Score each combo ─────────────────────────────────
 const GPA_RANGE      = { min: 2.7, max: 4.0 };
-const WORKLOAD_RANGE = { min: 12,  max: 48  };
+const WORKLOAD_RANGE = { min: 3,   max: 14  };
 
 function scaleGPA(v) {
   return clamp01((v - GPA_RANGE.min) / (GPA_RANGE.max - GPA_RANGE.min));
@@ -445,9 +456,9 @@ function generateExplanation(strategy, scores, plan, prefs) {
     return `Lowest enrollment risk of the three plans. Built around ${names} — courses with lighter waitlist pressure and more predictable availability. Prioritises stability for ${majorText}. Strong on ${strongest[0].toLowerCase()}, softer on ${weakest[0].toLowerCase()}.`;
   }
   if (strategy === "Ambitious") {
-    return `Highest degree progress of the three plans. Anchored by courses like ${names} that count directly toward ${majorText} requirements. Moves faster on coverage — the trade-off is higher ${weakest[0].toLowerCase()} pressure.`;
+    return `Highest degree progress of the three plans. Anchored by courses like ${names} that count directly toward ${majorText} requirements. Moves faster on requirement coverage, while accepting relatively weaker ${weakest[0].toLowerCase()}.`;
   }
-  return `Best overall score across all four priorities. Mixes ${names} to avoid sharp weaknesses in any single dimension. Its main strength is ${strongest[0].toLowerCase()}; it gives up a little on ${weakest[0].toLowerCase()} to stay balanced.`;
+  return `Best overall score across all four priorities. Mixes ${names} to stay strong across multiple dimensions. Its main strength is ${strongest[0].toLowerCase()}, with the least emphasis on ${weakest[0].toLowerCase()}.`;
 }
 
 function generateRiskAlert(plan) {
